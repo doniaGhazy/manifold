@@ -21,6 +21,10 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
       - run:
+          name: Install Missing Artifact
+          command: mvn install:install-file -Dfile=/path/to/manifold-json.jar -DgroupId=systems.manifold -DartifactId=manifold-json -Dversion=2023.1.30-SNAPSHOT -Dpackaging=jar
+          # Replace "/path/to/manifold-json.jar" with the actual path to the JAR file
+      - run:
           name: Build and Install Dependencies
           command: mvn clean install -DskipTests -pl manifold-deps-parent/manifold-json-test -am
       - run:
