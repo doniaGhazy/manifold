@@ -21,6 +21,12 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
       - run:
+          name: Build and Install Dependencies
+          command: mvn clean install -DskipTests -pl manifold-deps-parent/manifold-json-test -am
+      - run:
+          name: Run Specific Test
+          command: mvn -pl manifold-deps-parent/manifold-json-test test -Dtest=manifold.api.json.RequesterTest#httpPostRequestWithParameterizedUrlSuffixWithParams
+      - run:
           name: Run tests without NonDex
           command: mvn test -B
       - run:
