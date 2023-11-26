@@ -287,12 +287,6 @@
           <scope>system</scope>
           <systemPath>${java.home}/../lib/tools.jar</systemPath>
         </dependency>
-        <dependency>
-          <groupId>systems.manifold</groupId>
-          <artifactId>manifold-json</artifactId>
-          <version>2023.1.30-SNAPSHOT</version>
-        </dependency>
-
       </dependencies>
     </profile>
     <profile>
