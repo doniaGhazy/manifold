@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/openjdk:8-jdk
-      
+
     environment:
       MAVEN_OPTS: -Xmx1g
       TERM: dumb
@@ -12,17 +12,20 @@ jobs:
     branches:
       ignore:
         - /rel\/.*/
-    
+
     steps:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "pom.xml" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-      - run: 
-          name: Run tests
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run:
+          name: Run tests without NonDex
           command: mvn test -B
+      - run:
+          name: Run tests with NonDex
+          command: mvn -pl manifold-deps-parent/manifold-json-test edu.illinois:nondex-maven-plugin:2.1.1:nondex -Dtest=manifold.api.json.RequesterTest#httpPostRequestWithParameterizedUrlSuffixWithParams
       - run:
           name: Save test results
           command: |
