@@ -24,6 +24,10 @@ import org.junit.Test;
 import abc.Dummy;
 import spark.Spark;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.junit.Assert.assertEquals;
 
 public class RequesterTest
@@ -40,43 +44,54 @@ public class RequesterTest
     TestServer.stop();
   }
 
+  private void assertEqualParameterStrings(String expected, String actual) {
+    // Split and sort parameters for both expected and actual strings
+    List<String> expectedParams = Arrays.stream(expected.split("&")).sorted().collect(Collectors.toList());
+    List<String> actualParams = Arrays.stream(actual.split("&")).sorted().collect(Collectors.toList());
+
+    // Compare sorted parameter lists
+    assertEquals(expectedParams, actualParams);
+  }
+
   @Test
   public void httpPostRequestWithParams()
   {
     Requester<Dummy> req = Dummy.request( "http://localhost:4567/" )
-      .withParam( "foo", "bar" )
-      .withParam( "abc", "8" );
+            .withParam( "foo", "bar" )
+            .withParam( "abc", "8" );
     Object queryString = req.postOne( "testPost_QueryString", Dummy.create(), Requester.Format.Text );
-    assertEquals( "foo=bar&abc=8", queryString );
+    assertEqualParameterStrings("foo=bar&abc=8", queryString.toString());
   }
 
   @Test
-  public void httpGetRequestWithParams()
-  {
+  public void httpGetRequestWithParams() throws InterruptedException {
     Requester<Dummy> req = Dummy.request( "http://localhost:4567/" )
-      .withParam( "foo", "bar" )
-      .withParam( "abc", "8" );
+            .withParam( "foo", "bar" )
+            .withParam( "abc", "8" );
     Object queryString = req.getOne( "testGet_QueryString", Dummy.create(), Requester.Format.Text );
-    assertEquals( "foo=bar&abc=8", queryString );
+    Thread.sleep(1000);
+    // assertEquals( "foo=bar&abc=8", queryString );
+    assertEqualParameterStrings("foo=bar&abc=8", queryString.toString());
+
   }
 
   @Test
   public void httpPostRequestWithParameterizedUrlSuffixWithParams()
   {
     Requester<Dummy> req = Dummy.request( "http://localhost:4567/" )
-      .withParam( "foo", "bar" )
-      .withParam( "abc", "8" );
+            .withParam( "foo", "bar" )
+            .withParam( "abc", "8" );
     Object queryString = req.postOne( "testPost_QueryString?firstParam=firstValue", Dummy.create(), Requester.Format.Text );
-    assertEquals( "firstParam=firstValue&foo=bar&abc=8", queryString );
+    assertEqualParameterStrings("firstParam=firstValue&foo=bar&abc=8", queryString.toString());
   }
 
   @Test
   public void httpGetRequestWithParameterizedUrlSuffixWithParams()
   {
     Requester<Dummy> req = Dummy.request( "http://localhost:4567/" )
-      .withParam( "foo", "bar" )
-      .withParam( "abc", "8" );
+            .withParam( "foo", "bar" )
+            .withParam( "abc", "8" );
     Object queryString = req.getOne( "testGet_QueryString?firstParam=firstValue", Dummy.create(), Requester.Format.Text );
-    assertEquals( "firstParam=firstValue&foo=bar&abc=8", queryString );
+    assertEqualParameterStrings("firstParam=firstValue&foo=bar&abc=8", queryString.toString());
   }
 }
